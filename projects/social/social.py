@@ -1,8 +1,10 @@
+from util import Stack, Queue  # These may come in handy
 
 
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -47,8 +49,22 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(0, numUsers):
+            self.addUser(f"User {i}")
 
         # Create friendships
+        target_friendships = numUsers * avgFriendships
+        total_friendships = 0
+        collisions = 0
+
+        while total_friendships < target_friendships:
+            userID = random.randint(1, self.lastID)
+            friendID = random.randint(1, self.lastID)
+            if self.addFriendship(userID, friendID):  # if we succeed...
+                total_friendships += 2
+            else:
+                collisions += 1
+        print(f"COLLISIONS: {collisions}")
 
     def get_all_social_paths(self, user_id):
         """
@@ -61,6 +77,21 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        queue = Queue()
+
+        queue.enqueue([userID])
+
+        while queue.size() > 0:
+            path = queue.dequeue()
+            vertex = path[-1]
+            if vertex not in visited:
+                # adding this path to the dictionary as A shortest way here
+                visited[vertex] = path
+
+                for neighbor in self.friendships[vertex]:
+                    path_copy = path.copy()
+                    path_copy.append(neighbor)
+                    queue.enqueue(path_copy)
         return visited
 
 
